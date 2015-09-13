@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "F406F5534CC48AB9D7290AEAE6A365A4AA8BECEC",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "DA663E5888305FA63F57D762F7FB49019C8D0ACF" : 0,
+    "F406F5534CC48AB9D7290AEAE6A365A4AA8BECEC" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "3EEA361F-7427-4BE4-BD1D-B46B3E1025FB",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "DA663E5888305FA63F57D762F7FB49019C8D0ACF" : "..\/SocialCode\/bendjones\/advisor-swift",
+    "F406F5534CC48AB9D7290AEAE6A365A4AA8BECEC" : "PhotoBooth\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "PhotoBooth",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "PhotoBooth.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "github.com:bendjones\/advisor-swift.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "DA663E5888305FA63F57D762F7FB49019C8D0ACF"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "github.com:bendjones\/WeddingPhotoBooth.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "F406F5534CC48AB9D7290AEAE6A365A4AA8BECEC"
+    }
+  ]
+}
