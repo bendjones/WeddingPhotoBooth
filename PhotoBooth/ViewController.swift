@@ -9,6 +9,8 @@
 import UIKit
 import MessageUI
 
+import Photos
+
 class ViewController: UIViewController {
     @IBOutlet weak var imageView: UIImageView!
     
@@ -204,6 +206,7 @@ class ViewController: UIViewController {
 
     private func printImageTapped() {
         let printActionController = UIPrintInteractionController.sharedPrintController()
+        printActionController.delegate = self
         
         let printInfo = UIPrintInfo.printInfo()
         printInfo.outputType = .Photo
@@ -232,8 +235,8 @@ class ViewController: UIViewController {
             }
         }
         
-        photoStrip?.renderResult {
-            printActionController.printingItem = $0
+        photoStrip?.renderResult { image in
+            printActionController.printingItem = image
             
             if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
                 printActionController.presentFromRect(self.view.frame, inView: self.view, animated: true, completionHandler: handler)
@@ -241,6 +244,16 @@ class ViewController: UIViewController {
                 printActionController.presentAnimated(true, completionHandler: handler)
             }
         }
+    }
+}
+
+extension ViewController : UIPrintInteractionControllerDelegate {
+    func printInteractionController(printInteractionController: UIPrintInteractionController, choosePaper paperList: [UIPrintPaper]) -> UIPrintPaper {
+        let pageSize = CGSize(width: 360, height: 504)
+        
+        let bestPaper = UIPrintPaper.bestPaperForPageSize(pageSize, withPapersFromArray: paperList)
+        
+        return bestPaper
     }
 }
 
@@ -275,6 +288,18 @@ extension ViewController : UIImagePickerControllerDelegate, UINavigationControll
         guard let brandImage = UIImage(named: "BrandImage") else { return }
         
         self.photoStrip = PhotoStrip(photos: self.photos, logo: brandImage)
+        
+        self.photoStrip?.renderResult { image in
+            
+            PHPhotoLibrary.sharedPhotoLibrary().performChanges({
+                let request = PHAssetChangeRequest.creationRequestForAssetFromImage(image)
+                request.creationDate = NSDate()
+                }, completionHandler: { success, error in
+                    if !success || error != nil {
+                        print("Bad things \(error)")
+                    }
+            })
+        }
     }
     
     func imagePickerControllerDidCancel(picker: UIImagePickerController) {

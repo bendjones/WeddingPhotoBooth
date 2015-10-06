@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C9B351C11BAE2830002B4920 /* PhotoStripPrintFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9B351C01BAE2830002B4920 /* PhotoStripPrintFormatter.swift */; settings = {ASSET_TAGS = (); }; };
 		C9D71F6E1BA49C8A00084C37 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D71F6D1BA49C8A00084C37 /* AppDelegate.swift */; };
 		C9D71F701BA49C8A00084C37 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D71F6F1BA49C8A00084C37 /* ViewController.swift */; };
 		C9D71F731BA49C8A00084C37 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C9D71F711BA49C8A00084C37 /* Main.storyboard */; };
@@ -29,6 +30,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		C9B351C01BAE2830002B4920 /* PhotoStripPrintFormatter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhotoStripPrintFormatter.swift; sourceTree = "<group>"; };
 		C9D71F6A1BA49C8A00084C37 /* PhotoBooth.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PhotoBooth.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9D71F6D1BA49C8A00084C37 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C9D71F6F1BA49C8A00084C37 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -117,6 +119,7 @@
 			children = (
 				C9D71F8D1BA49CA300084C37 /* PhotoStrip.swift */,
 				C9D71F981BA4B44C00084C37 /* CameraController.swift */,
+				C9B351C01BAE2830002B4920 /* PhotoStripPrintFormatter.swift */,
 			);
 			name = PhotoBooth;
 			sourceTree = "<group>";
@@ -225,6 +228,7 @@
 				C9D71F8E1BA49CA300084C37 /* PhotoStrip.swift in Sources */,
 				C9D71F991BA4B44C00084C37 /* CameraController.swift in Sources */,
 				C9D71F9D1BA517B500084C37 /* FadeTransitionAnimator.swift in Sources */,
+				C9B351C11BAE2830002B4920 /* PhotoStripPrintFormatter.swift in Sources */,
 				C9D71F6E1BA49C8A00084C37 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -415,6 +419,7 @@
 				C9D71F891BA49C8A00084C37 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		C9D71F8A1BA49C8A00084C37 /* Build configuration list for PBXNativeTarget "PhotoBoothTests" */ = {
 			isa = XCConfigurationList;
@@ -423,6 +428,7 @@
 				C9D71F8C1BA49C8A00084C37 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
