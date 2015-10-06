@@ -9,7 +9,41 @@
 import UIKit
 import MessageUI
 
+import CoreLocation
 import Photos
+
+private class RenderSaver {
+    private static var locationManager: CLLocationManager?
+    
+    private static let queue: dispatch_queue_t = {
+        let qos_attr = dispatch_queue_attr_make_with_qos_class(DISPATCH_QUEUE_CONCURRENT, QOS_CLASS_UTILITY, 0)
+        
+        return dispatch_queue_create("com.apricletechnologies.PhotoBooth.PrivatePhotoLibraryQueue", qos_attr)
+    }()
+    
+    private static var render: UIImage? {
+        didSet {
+            guard let render = render else { return }
+            
+            locationManager?.requestLocation()
+            
+            dispatch_async(queue) {
+                PHPhotoLibrary.sharedPhotoLibrary().performChanges({
+                    let request = PHAssetChangeRequest.creationRequestForAssetFromImage(render)
+                    request.creationDate = NSDate()
+                    
+                    if let location = locationManager?.location {
+                        request.location = location
+                    }
+                }, completionHandler: { success, error in
+                    if !success || error != nil {
+                        print("Bad things \(error)")
+                    }
+                })
+            }
+        }
+    }
+}
 
 class ViewController: UIViewController {
     @IBOutlet weak var imageView: UIImageView!
@@ -31,6 +65,8 @@ class ViewController: UIViewController {
         return vc
     }()
     
+    var printController: UIPrintInteractionController?
+    
     var photoStrip: PhotoStrip? {
         didSet {
             if let strip = photoStrip {
@@ -38,6 +74,21 @@ class ViewController: UIViewController {
                 self.instructionsLabel.hidden = true
                 self.titleLabel.hidden = true
                 strip.renderResult {
+                    RenderSaver.locationManager = self.manager
+                    RenderSaver.render = $0
+                    
+                    let printActionController = UIPrintInteractionController.sharedPrintController()
+                    printActionController.delegate = self
+                    
+                    let printInfo = UIPrintInfo.printInfo()
+                    printInfo.outputType = .Photo
+                    printInfo.jobName = "PhotoStrip"
+                    printInfo.duplex = .None
+                    printActionController.printInfo = printInfo
+                    printActionController.showsPageRange = false
+                    printActionController.printingItem = $0
+                    self.printController = printActionController
+                    
                     let animation = CABasicAnimation()
                     animation.keyPath = "backgroundColor"
                     animation.toValue = UIColor.blackColor()
@@ -78,8 +129,34 @@ class ViewController: UIViewController {
         // Do any additional setup after loading the view, typically from a nib.
     }
     
+    lazy var manager: CLLocationManager = {
+        let manager = CLLocationManager()
+        manager.delegate = self
+        
+        if CLLocationManager.locationServicesEnabled() {
+            manager.requestLocation()
+        }
+        
+        return manager
+    }()
+    
     override func viewDidAppear(animated: Bool) {
         super.viewDidAppear(animated)
+        
+        PHPhotoLibrary.requestAuthorization { status in
+            switch status {
+            case .Denied, .NotDetermined, .Restricted:
+                self.showAlert("Sorry we need photo access, we're trying to make a guest book ya know!")
+            default:
+                debugPrint("Ok ok it's all good!")
+            }
+        }
+        
+        if CLLocationManager.authorizationStatus() == .NotDetermined {
+            manager.requestWhenInUseAuthorization()
+        }
+        
+        manager.requestLocation()
     }
 
     override func didReceiveMemoryWarning() {
@@ -205,16 +282,6 @@ class ViewController: UIViewController {
     }
 
     private func printImageTapped() {
-        let printActionController = UIPrintInteractionController.sharedPrintController()
-        printActionController.delegate = self
-        
-        let printInfo = UIPrintInfo.printInfo()
-        printInfo.outputType = .Photo
-        printInfo.jobName = "PhotoStrip"
-        printInfo.duplex = .None
-        printActionController.printInfo = printInfo
-        printActionController.showsPageRange = false
-        
         let handler: UIPrintInteractionCompletionHandler = { controller, completed, error in
             guard error == nil else {
                 if let error = error {
@@ -235,23 +302,21 @@ class ViewController: UIViewController {
             }
         }
         
-        photoStrip?.renderResult { image in
-            printActionController.printingItem = image
-            
-            if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
-                printActionController.presentFromRect(self.view.frame, inView: self.view, animated: true, completionHandler: handler)
-            } else {
-                printActionController.presentAnimated(true, completionHandler: handler)
-            }
+        if UIDevice.currentDevice().userInterfaceIdiom == .Pad {
+            printController?.presentFromRect(self.view.frame, inView: self.view, animated: true, completionHandler: handler)
+        } else {
+            printController?.presentAnimated(true, completionHandler: handler)
         }
     }
 }
 
 extension ViewController : UIPrintInteractionControllerDelegate {
     func printInteractionController(printInteractionController: UIPrintInteractionController, choosePaper paperList: [UIPrintPaper]) -> UIPrintPaper {
-        let pageSize = CGSize(width: 360, height: 504)
+        let pageSize = CGSize(width: 288, height: 432)
         
         let bestPaper = UIPrintPaper.bestPaperForPageSize(pageSize, withPapersFromArray: paperList)
+        
+        print("iOS says best paper size is \(bestPaper.paperSize.width),\(bestPaper.paperSize.height)")
         
         return bestPaper
     }
@@ -288,18 +353,6 @@ extension ViewController : UIImagePickerControllerDelegate, UINavigationControll
         guard let brandImage = UIImage(named: "BrandImage") else { return }
         
         self.photoStrip = PhotoStrip(photos: self.photos, logo: brandImage)
-        
-        self.photoStrip?.renderResult { image in
-            
-            PHPhotoLibrary.sharedPhotoLibrary().performChanges({
-                let request = PHAssetChangeRequest.creationRequestForAssetFromImage(image)
-                request.creationDate = NSDate()
-                }, completionHandler: { success, error in
-                    if !success || error != nil {
-                        print("Bad things \(error)")
-                    }
-            })
-        }
     }
     
     func imagePickerControllerDidCancel(picker: UIImagePickerController) {
@@ -357,3 +410,12 @@ extension ViewController : MFMailComposeViewControllerDelegate {
     }
 }
 
+extension ViewController : CLLocationManagerDelegate {
+    func locationManager(manager: CLLocationManager, didFailWithError error: NSError) {
+        print("Location manager failed with error: \(error)")
+    }
+    
+    func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        print("updated location to locations \(locations)")
+    }
+}
